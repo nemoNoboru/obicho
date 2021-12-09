@@ -29,6 +29,7 @@ pub enum Animal {
     Peru,
     Travequeiro,
     Bundeiro,
+    Billy,
     NotFound,
 }
 
@@ -61,6 +62,7 @@ pub fn get_animal_from_number(raw_number: i32) -> Animal {
         23 => Animal::Peru,
         24 => Animal::Travequeiro,
         25 => Animal::Bundeiro,
+        26 => Animal::Billy,
         _ => Animal::NotFound,
     }
 }
@@ -105,6 +107,7 @@ pub fn get_animal_from_text(text: &str) -> Animal {
         "peru" => Animal::Peru,
         "travequeiro" => Animal::Travequeiro,
         "bundeiro" => Animal::Bundeiro,
+        "billy" => Animal::Billy,
         _ => Animal::NotFound,
     }
 }
