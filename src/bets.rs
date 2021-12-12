@@ -8,12 +8,12 @@ use std::io::Write;
 pub struct Bet {
     pub amount: f64,
     pub animal: Animal,
-    pub user: f64,
+    pub user: i64,
 }
 
 pub struct BetResult {
     pub amount: f64,
-    pub user: f64,
+    pub user: i64,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -69,7 +69,7 @@ impl Bets {
         animals
     }
 
-    pub fn get_amount_by_user_and_animal(&self, user: f64, animal: Animal) -> f64 {
+    pub fn get_amount_by_user_and_animal(&self, user: i64, animal: Animal) -> f64 {
         let mut total = 0.0;
         for bet in &self.bets {
             if bet.user == user && bet.animal == animal {
@@ -79,7 +79,7 @@ impl Bets {
         total
     }
 
-    pub fn get_all_users(&self) -> Vec<f64> {
+    pub fn get_all_users(&self) -> Vec<i64> {
         let mut users = Vec::new();
         for bet in &self.bets {
             if !users.contains(&bet.user) {
@@ -99,8 +99,8 @@ impl Bets {
             let bet_user_amount = self.get_amount_by_user_and_animal(user, result);
             let user_won = (total / animal_amount) * bet_user_amount;
             results.push(BetResult {
-                amount: user_won,
                 user,
+                amount: user_won,
             });
         }
         results

@@ -5,18 +5,18 @@ use std::io::Write;
 
 #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct User {
-    pub user: i32,
+    pub user: i64,
     pub amount: f64,
 }
 
 #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct Users {
-    pub users: HashMap<i32, User>,
+    pub users: HashMap<i64, User>,
 }
 
 impl Users {
     // load users from file using bincode
-    pub fn load_users(file: &str) -> Users {
+    pub fn load(file: &str) -> Users {
         let mut users = Users {
             users: HashMap::new(),
         };
@@ -33,7 +33,7 @@ impl Users {
     }
 
     // save users to file using bincode
-    pub fn save_users(&self, file: &str) {
+    pub fn save(&self, file: &str) {
         let mut f = File::create(file).expect("file not found");
         let encoded: Vec<u8> = bincode::serialize(&self.users, bincode::Infinite)
             .expect("something went wrong encoding the file");
@@ -42,7 +42,7 @@ impl Users {
     }
 
     // add user to users
-    pub fn add_user(&mut self, user: i32) {
+    pub fn add_user(&mut self, user: i64) {
         if self.users.contains_key(&user) {
             return;
         }
@@ -50,12 +50,12 @@ impl Users {
     }
 
     // update amount of user
-    pub fn update_amount(&mut self, user: i32, amount: f64) {
+    pub fn update_amount(&mut self, user: i64, amount: f64) {
         if !self.users.contains_key(&user) {
             return;
         }
         // check if user has enough amount
-        if self.users.get(&user).unwrap().amount > -amount {
+        if self.users.get(&user).unwrap().amount > amount {
             return;
         }
         self.users.get_mut(&user).unwrap().amount += amount;

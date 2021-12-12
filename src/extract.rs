@@ -3,13 +3,10 @@ use crate::enums::get_animal_from_number;
 use crate::enums::Animal;
 use std::collections::HashMap;
 
-pub fn get_bet_from_text(text: String, user: f64) -> Option<Bet> {
+pub fn get_bet_from_text(text: String, user: i64) -> Option<Bet> {
     let mut words = text.split_whitespace();
     let amount = words.next()?.parse::<f64>().ok()?;
     let animal = words.next()?.parse::<Animal>().ok()?;
-    if !user.is_normal() {
-        return None;
-    }
     Some(Bet {
         amount,
         animal,

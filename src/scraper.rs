@@ -1,7 +1,7 @@
 use reqwest;
 use scraper::{Html, Selector};
 
-pub async fn get_once_results() -> Result<String, reqwest::Error> {
+pub async fn get_once_results() -> Result<i32, reqwest::Error> {
     let response = reqwest::get("https://www.juegosonce.es/resultados-cupon-diario")
         .await?
         .text()
@@ -15,5 +15,7 @@ pub async fn get_once_results() -> Result<String, reqwest::Error> {
         .last()
         .unwrap()
         .text()
-        .collect::<String>())
+        .collect::<String>()
+        .parse::<i32>()
+        .unwrap())
 }
