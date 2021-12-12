@@ -19,19 +19,14 @@ pub struct BetResult {
 #[derive(Serialize, Deserialize)]
 pub struct Bets {
     pub bets: Vec<Bet>,
-    pub day: usize,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct AllBets {
-    pub bets: HashMap<usize, Bets>,
+    pub lottery_num: Option<i32>,
 }
 
 impl Bets {
     pub fn new() -> Bets {
         Bets {
             bets: Vec::new(),
-            day: get_day_id(),
+            lottery_num: None,
         }
     }
 
@@ -110,46 +105,27 @@ impl Bets {
         }
         results
     }
-}
 
-// returns a unique  id for each day
-pub fn get_day_id() -> usize {
-    let now = chrono::Utc::now();
-    let day = now.date().format("%Y%m%d").to_string();
-    day.parse::<usize>().unwrap()
-}
-
-impl AllBets {
-    // save struct to file using bincode
-    pub fn save(&self, path: &str) {
-        let encoded = bincode::serialize(&self, bincode::Infinite).unwrap();
-        let mut file = std::fs::File::create(path).unwrap();
-        file.write_all(&encoded).unwrap();
-    }
-
-    // load struct from file using bincode
-    pub fn load(path: &str) -> AllBets {
-        let mut file = std::fs::File::open(path).unwrap();
-        let mut encoded = Vec::new();
-        file.read_to_end(&mut encoded).unwrap();
-        let bets = bincode::deserialize(&encoded).unwrap();
+    // load from disc using bincode
+    pub fn load(path: &str) -> Bets {
+        // if no file exists, create a new one
+        let mut file = match std::fs::File::open(path) {
+            Ok(file) => file,
+            Err(_) => {
+                let bets = Bets::new();
+                bets.save(path);
+                return bets;
+            }
+        };
+        let mut buffer = Vec::new();
+        file.read_to_end(&mut buffer).unwrap();
+        let bets = bincode::deserialize(&buffer).unwrap();
         bets
     }
 
-    // get a reference for active bets
-    pub fn get_active_bets(&self) -> &Bets {
-        &self.bets.get(&get_day_id()).unwrap()
-    }
-
-    // add a bet for the current day
-    pub fn add_bet(&mut self, bet: Bet) {
-        let day = get_day_id();
-        if self.bets.contains_key(&day) {
-            self.bets.get_mut(&day).unwrap().add_bet(bet);
-        } else {
-            let mut bets = Bets::new();
-            bets.add_bet(bet);
-            self.bets.insert(day, bets);
-        }
+    pub fn save(&self, path: &str) {
+        let mut file = std::fs::File::create(path).unwrap();
+        let buffer = bincode::serialize(&self, bincode::Infinite).unwrap();
+        file.write_all(&buffer).unwrap();
     }
 }
