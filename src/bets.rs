@@ -11,6 +11,7 @@ pub struct Bet {
     pub user: i64,
 }
 
+#[derive(Debug)]
 pub struct BetResult {
     pub amount: f64,
     pub user: i64,
@@ -96,12 +97,14 @@ impl Bets {
         let animal_amount = self.get_amount_by_animal(result);
 
         for user in users {
-            let bet_user_amount = self.get_amount_by_user_and_animal(user, result);
-            let user_won = (total / animal_amount) * bet_user_amount;
-            results.push(BetResult {
-                user,
-                amount: user_won,
-            });
+            if animal_amount > 0.0 {
+                let bet_user_amount = self.get_amount_by_user_and_animal(user, result);
+                let user_won = (total / animal_amount) * bet_user_amount;
+                results.push(BetResult {
+                    user,
+                    amount: user_won,
+                });
+            }
         }
         results
     }

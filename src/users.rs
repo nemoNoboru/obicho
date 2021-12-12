@@ -3,18 +3,23 @@ use std::fs::File;
 use std::io::Read;
 use std::io::Write;
 
-#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
 pub struct User {
     pub user: i64,
     pub amount: f64,
 }
 
-#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize, Debug)]
 pub struct Users {
     pub users: HashMap<i64, User>,
 }
 
 impl Users {
+    pub fn new() -> Users {
+        Users {
+            users: HashMap::new(),
+        }
+    }
     // load users from file using bincode
     pub fn load(file: &str) -> Users {
         let mut users = Users {
@@ -46,16 +51,27 @@ impl Users {
         if self.users.contains_key(&user) {
             return;
         }
-        self.users.insert(user, User { user, amount: 0.0 });
+        self.users.insert(
+            user,
+            User {
+                user,
+                amount: 100.0,
+            },
+        );
+    }
+
+    // get user from users
+    pub fn get_user(&self, user: i64) -> Option<&User> {
+        self.users.get(&user)
     }
 
     // update amount of user
     pub fn update_amount(&mut self, user: i64, amount: f64) {
         if !self.users.contains_key(&user) {
-            return;
+            self.add_user(user)
         }
         // check if user has enough amount
-        if self.users.get(&user).unwrap().amount > amount {
+        if self.users.get(&user).unwrap().amount + amount < 0.0 {
             return;
         }
         self.users.get_mut(&user).unwrap().amount += amount;

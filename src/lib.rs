@@ -2,12 +2,12 @@ use neon::prelude::*;
 #[macro_use]
 extern crate lazy_static;
 extern crate serde_derive;
-
 mod bets;
 mod bicho;
 mod enums;
 mod extract;
 mod scraper;
+mod tests;
 mod users;
 
 fn create_bet(mut cx: FunctionContext) -> JsResult<JsString> {
